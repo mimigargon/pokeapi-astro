@@ -1,0 +1,59 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Back from "../../components/Back.astro";
+let titleIMG = "../../../public/img/logo.svg";
+const { name } = Astro.params;
+let rute = "/";
+
+let pokeList = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`).then(
+    (respuesta) => respuesta.json(),
+);
+---
+
+<Layout title={titleIMG}>
+    <Back rute={rute} />
+    <div class="flex justify-center items-center justify-items-center m-10">
+        <div
+            class="flex flex-row text-center w-fit bg-green-400 border border-solid border-black rounded-lg shadow p-5"
+        >
+            <img
+                class="h-96 w-96"
+                src={pokeList.sprites.other["official-artwork"].front_default}
+            />
+
+            <div class="ml-20 mr-10 flex flex-col justify-center items-center">
+                <p
+                    class="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 uppercase"
+                >
+                    Name: <span
+                        class="ml-2 mb-4 text-3xl leading-none tracking-tight text-gray-900 uppercase"
+                        >{pokeList.name}</span
+                    >
+                </p>
+                <p
+                    class="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 uppercase"
+                >
+                    Abilities:
+                    {
+                        pokeList.abilities.map((ability) => (
+                            <span class="ml-2 mb-4 text-3xl leading-none tracking-tight text-gray-900 uppercase">
+                                {ability.ability.name}
+                            </span>
+                        ))
+                    }
+                </p>
+                <p
+                    class="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 uppercase"
+                >
+                    Types: {
+                        pokeList.types.map((type) => (
+                            <span class="ml-2 mb-4 text-3xl leading-none tracking-tight text-gray-900 uppercase">
+                                {type.type.name}
+                            </span>
+                        ))
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</Layout>

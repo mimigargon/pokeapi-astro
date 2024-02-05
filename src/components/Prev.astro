@@ -1,0 +1,24 @@
+---
+let offset = Astro.url.searchParams.get("offset");
+offset = parseInt(offset);
+const prev = `?offset=${offset == 0 ? 0 : offset - 20}`;
+
+let prevPokeList = await fetch(
+    `https://pokeapi.co/api/v2/pokemon?limit=20&offset=${prev}`,
+);
+prevPokeList = await prevPokeList.json();
+prevPokeList = prevPokeList.results;
+
+const promises = await prevPokeList.map(async (poke) => {
+    let item = await fetch(poke.url);
+    item = await item.json();
+    return {
+        name: poke.name,
+        img: item.sprites.other["official-artwork"].front_default,
+        types: item.types,
+    };
+});
+
+const pokemons = await Promise.all(promises);
+console.log(pokemons);
+---

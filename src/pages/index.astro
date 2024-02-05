@@ -1,0 +1,58 @@
+---
+import Next from "../components/Next.astro";
+import Poke from "../components/Poke.astro";
+import Prev from "../components/Prev.astro";
+import Layout from "../layouts/Layout.astro";
+
+let titleIMG = "/img/logo.svg";
+
+let offset = Astro.url.searchParams.get("offset");
+offset = parseInt(offset);
+
+let pokeList = await fetch(
+	`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${offset}`,
+);
+pokeList = await pokeList.json();
+pokeList = pokeList.results;
+
+const promises = await pokeList.map(async (poke) => {
+	let item = await fetch(poke.url);
+	item = await item.json();
+	return {
+		name: poke.name,
+		img: item.sprites.other["official-artwork"].front_default,
+		types: item.types,
+	};
+});
+
+const pokemons = await Promise.all(promises);
+---
+
+<Layout title={titleIMG}>
+	<div
+		class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center"
+	>
+		{
+			pokemons.map((pokemon) => (
+				<Poke
+					name={pokemon.name}
+					img={pokemon.img}
+					type={pokemon.types}
+				/>
+			))
+		}
+	</div>
+	<div class="m-5 flex flex-row content-around">
+		<a
+			class="focus:outline-none text-white bg-green-400 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+			href="/prev">Prev</a
+		>
+		<a
+			class="focus:outline-none text-white bg-green-400 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+			href="/next">Next</a
+		>
+	</div>
+
+	<!-- <Prev /> -->
+	<Next />
+</Layout>

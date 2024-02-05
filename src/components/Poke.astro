@@ -1,0 +1,25 @@
+---
+const { name, img, type } = Astro.props;
+
+let rute = "/pokemon/" + name;
+---
+
+<div
+    class="text-center max-w-48 bg-green-400 border border-solid border-black rounded-lg shadow m-5 pb-5"
+>
+    <a href={rute}>
+        <img class="max-h-48 max-w-48" src={img} />
+    </a>
+    <h1
+        class="text-center text-2xl mb-4 font-extrabold leading-none tracking-tight text-gray-900 uppercase"
+    >
+        {name}
+    </h1>
+    {
+        type.map((t) => (
+            <span class="mb-10 ml-3 font-extrabold leading-none tracking-tight text-gray-900 uppercase">
+                {t.type?.name}
+            </span>
+        ))
+    }
+</div>
